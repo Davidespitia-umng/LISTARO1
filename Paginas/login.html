@@ -3,59 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mis edificios — Listaro</title>
+  <title>Entrar a Listaro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-
-<header class="nav">
-  <a class="marca" href="../index.html"><span class="marca-punto"></span> Listaro</a>
-  <div class="nav-acciones"></div>
-</header>
-
-<main class="app">
-
-  <div class="app-cabecera">
+<main class="split">
+  <section class="split-izq">
+    <a class="marca" href="../index.html"><span class="marca-punto"></span> Listaro</a>
     <div>
-      <h1>Mis edificios</h1>
-      <p class="sub" id="saludo"></p>
+      <h1>Todo bajo <span class="naranja">control.</span></h1>
+      <p>Entra y revisa el inventario de cada edificio y habitación en un solo lugar.</p>
+      <ul class="lista-chequeo">
+        <li>Stock actualizado al registrar cada movimiento</li>
+        <li>Avisos cuando un artículo baja del mínimo</li>
+        <li>Historial con fecha y responsable</li>
+      </ul>
     </div>
-    <button class="btn btn-naranja" data-abrir="modal-edificio">Nuevo edificio</button>
-  </div>
+    <p class="split-pie">Inventario por edificio, habitación y artículo.</p>
+  </section>
 
-  <div class="resumen">
-    <div class="resumen-celda"><span class="etiqueta">Edificios</span><strong id="r-edificios">0</strong></div>
-    <div class="resumen-celda"><span class="etiqueta">Habitaciones</span><strong id="r-habitaciones">0</strong></div>
-    <div class="resumen-celda"><span class="etiqueta">Unidades en stock</span><strong id="r-unidades">0</strong></div>
-    <div class="resumen-celda"><span class="etiqueta">Bajo mínimo</span><strong id="r-alertas">0</strong></div>
-  </div>
+  <section class="split-der">
+    <div class="formulario">
+      <h2>Accede al panel</h2>
+      <p class="sub">Usa el correo con el que creaste tu cuenta.</p>
 
-  <div id="lista-edificios"></div>
+      <p class="error" id="error-login" hidden></p>
+
+      <form id="form-login" novalidate>
+        <label for="correo">Correo</label>
+        <input id="correo" name="correo" type="email" autocomplete="email"
+               placeholder="tu@correo.com" required>
+
+        <label for="clave">Contraseña</label>
+        <input id="clave" name="clave" type="password" autocomplete="current-password"
+               placeholder="Tu contraseña" required>
+
+        <button class="btn btn-naranja btn-bloque" type="submit">Entrar</button>
+      </form>
+
+      <p class="demo-hint">
+        ¿Solo quieres mirar? Entra con <strong>demo@listaro.co</strong> y la
+        contraseña <strong>demo1234</strong>.
+      </p>
+      <p class="sub">¿Aún no tienes cuenta?
+        <a class="enlace-naranja" href="registro.html">Regístrate</a>
+      </p>
+    </div>
+  </section>
 </main>
-
-<div class="modal" id="modal-edificio" hidden>
-  <div class="modal-caja" role="dialog" aria-modal="true" aria-labelledby="t-edificio">
-    <h3 id="t-edificio">Nuevo edificio</h3>
-    <form id="form-edificio">
-      <label for="ed-nombre">Nombre</label>
-      <input id="ed-nombre" name="nombre" placeholder="Hotel Central" required>
-
-      <label for="ed-direccion">Dirección</label>
-      <input id="ed-direccion" name="direccion" placeholder="Cra. 7 #45-12">
-
-      <label for="ed-notas">Notas</label>
-      <input id="ed-notas" name="notas" placeholder="Opcional">
-
-      <div class="modal-acciones">
-        <button type="button" class="btn btn-fantasma" data-cerrar>Cancelar</button>
-        <button type="submit" class="btn btn-naranja">Guardar edificio</button>
-      </div>
-    </form>
-  </div>
-</div>
 
 <div id="aviso" class="aviso" role="status" aria-live="polite"></div>
 <script src="../js/datos.js"></script>
