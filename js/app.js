@@ -111,6 +111,28 @@ const Listaro = (() => {
     caja.hidden = false;
   }
 
+  function iniciarCookies() {
+    const aviso = document.getElementById("aviso-cookies");
+    const claveCookies = "listaro:cookies-aceptadas-v2";
+    if (!aviso) return;
+    try {
+      if (localStorage.getItem(claveCookies) === "1") return;
+    } catch (error) {
+      console.warn("Listaro no pudo leer la preferencia de cookies.", error);
+    }
+    aviso.hidden = false;
+    const aceptar = document.getElementById("aceptar-cookies");
+    if (!aceptar) return;
+    aceptar.addEventListener("click", () => {
+      try {
+        localStorage.setItem(claveCookies, "1");
+      } catch (error) {
+        console.warn("Listaro no pudo guardar la preferencia de cookies.", error);
+      }
+      aviso.hidden = true;
+    });
+  }
+
   /* ---------------------------------------------------- login y registro */
   function iniciarLogin() {
     const form = document.getElementById("form-login");
@@ -138,6 +160,50 @@ const Listaro = (() => {
         window.location.href = rutaInicioSesion();
       } catch (e) {
         mostrarError("#error-registro", e.message);
+      }
+    });
+  }
+
+  function iniciarRecuperacion() {
+    const form = document.getElementById("form-recuperar");
+    if (form) {
+      form.addEventListener("submit", async (ev) => {
+        ev.preventDefault();
+        try {
+          const correo = new FormData(form).get("correo");
+          const datos = await Datos.solicitarRestablecimiento(correo);
+          document.getElementById("mensaje-recuperar").textContent = datos.mensaje;
+          document.getElementById("mensaje-recuperar").hidden = false;
+          form.querySelector("button").disabled = true;
+          document.getElementById("form-restablecer").hidden = false;
+        } catch (error) {
+          mostrarError("#error-recuperar", error.message);
+        }
+      });
+    }
+
+    const resetForm = document.getElementById("form-restablecer");
+    if (!resetForm) return;
+    resetForm.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const datos = Object.fromEntries(new FormData(resetForm).entries());
+      try {
+        const correo = new FormData(form).get("correo");
+        const respuesta = await Datos.restablecerClave(correo, datos.codigo, datos.clave, datos.confirmar);
+        const mensaje = document.getElementById("mensaje-restablecer")
+          || document.getElementById("mensaje-recuperar");
+        if (mensaje) {
+          mensaje.textContent = respuesta.mensaje;
+          mensaje.hidden = false;
+        }
+        resetForm.remove();
+      } catch (error) {
+        mostrarError(
+          document.getElementById("error-restablecer")
+            ? "#error-restablecer"
+            : "#error-recuperar",
+          error.message
+        );
       }
     });
   }
@@ -447,12 +513,14 @@ const Listaro = (() => {
 
   /* ---------------------------------------------------- arranque */
   document.addEventListener("DOMContentLoaded", async () => {
+    iniciarCookies();
     try {
       await Datos.cargarSesion();
       await pintarNav();
       activarModales();
       iniciarLogin();
       iniciarRegistro();
+      iniciarRecuperacion();
       await iniciarPanel();
       await iniciarEdificio();
       await iniciarHabitacion();

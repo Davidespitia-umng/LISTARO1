@@ -181,6 +181,50 @@ if ($action === 'register' && $method === 'POST') {
     reply(['id' => $id, 'nombre' => $nombre, 'correo' => $correo, 'rol' => $rol], 201);
 }
 
+if ($action === 'request-password-reset' && $method === 'POST') {
+    $correo = strtolower(trim((string)($data['correo'] ?? '')));
+    $mensaje = 'Si el correo está registrado, puedes continuar con el código de demostración.';
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        fail('Escribe un correo válido.');
+    }
+
+    $stmt = db()->prepare('SELECT id, nombre FROM usuarios WHERE correo = ?');
+    $stmt->execute([$correo]);
+    $account = $stmt->fetch();
+    if (!$account) {
+        fail('No encontramos una cuenta con ese correo.', 404);
+    }
+    reply(['mensaje' => 'Correo encontrado. Introduce el código de demostración para continuar.']);
+}
+
+if ($action === 'reset-password' && $method === 'POST') {
+    $correo = strtolower(trim((string)($data['correo'] ?? '')));
+    $codigo = trim((string)($data['codigo'] ?? ''));
+    $clave = (string)($data['clave'] ?? '');
+    $confirmar = (string)($data['confirmar'] ?? '');
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        fail('Escribe un correo válido.');
+    }
+    if (!hash_equals('LISTARO-DEMO', $codigo)) {
+        fail('El código de demostración no es válido.', 422);
+    }
+    if (strlen($clave) < 8) {
+        fail('La contraseña necesita al menos 8 caracteres.');
+    }
+    if ($clave !== $confirmar) {
+        fail('Las contraseñas no coinciden.');
+    }
+    $stmt = db()->prepare('SELECT id FROM usuarios WHERE correo = ?');
+    $stmt->execute([$correo]);
+    $account = $stmt->fetch();
+    if (!$account) {
+        fail('No encontramos una cuenta con ese correo.', 404);
+    }
+    $stmt = db()->prepare('UPDATE usuarios SET clave = ? WHERE id = ?');
+    $stmt->execute([password_hash($clave, PASSWORD_DEFAULT), (int)$account['id']]);
+    reply(['mensaje' => 'Contraseña actualizada. Ya puedes iniciar sesión.']);
+}
+
 if ($action === 'logout' && $method === 'POST') {
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {

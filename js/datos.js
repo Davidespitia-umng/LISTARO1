@@ -58,6 +58,20 @@ const Datos = (() => {
     return sesion;
   }
 
+  async function solicitarRestablecimiento(correo) {
+    return pedir("request-password-reset", {
+      method: "POST",
+      body: JSON.stringify({ correo }),
+    });
+  }
+
+  async function restablecerClave(correo, codigo, clave, confirmar) {
+    return pedir("reset-password", {
+      method: "POST",
+      body: JSON.stringify({ correo, codigo, clave, confirmar }),
+    });
+  }
+
   async function salir() {
     await pedir("logout", { method: "POST" });
     sesion = null;
@@ -193,7 +207,8 @@ const Datos = (() => {
   }
 
   return {
-    cargarSesion, usuarioActual, entrar, registrar, salir, exigirSesion,
+    cargarSesion, usuarioActual, entrar, registrar, solicitarRestablecimiento,
+    restablecerClave, salir, exigirSesion,
     edificiosDe, edificio, habitacionesDe, habitacion, itemsDe,
     movimientosDe, resumen, crearEdificio, crearHabitacion, crearItem,
     registrarMovimiento, borrarItem, usuarios, crearUsuario, cambiarRol,
