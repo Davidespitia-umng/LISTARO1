@@ -2,7 +2,7 @@
 
 LISTARO es una plataforma web que centraliza y facilita la gestión del inventario de un hotel, permitiendo controlar productos, movimientos y existencias de forma organizada, trazable y según los permisos de cada usuario.
 
-## Descripción del proyecto
+## Descripción del proyecto hecho
 
 LISTARO es un sistema web de gestión y control de inventario diseñado para establecimientos hoteleros. Su propósito es centralizar y organizar la información relacionada con los productos y elementos utilizados en las diferentes áreas de un hotel, facilitando el control de existencias y el seguimiento de los movimientos de inventario.
 
